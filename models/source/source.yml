@@ -1,0 +1,31 @@
+version: 2
+
+sources:
+  - name: raw
+    database: DEV
+    schema: raw
+    description: "Schema which stores raw tables (ETL layer) containing ingested external data like stock prices."
+
+    tables:
+      - name: stock_prices
+        identifier: stock_prices
+        description: "Raw stock price data fetched via Alpha Vantage API. Includes daily OHLCV for each stock symbol."
+        columns:
+          - name: date
+            description: "The date of the stock price entry"
+            tests:
+              - not_null
+          - name: symbol
+            description: "Stock ticker symbol (e.g., AAPL, TSLA)"
+            tests:
+              - not_null
+          - name: open
+            description: "Opening price for the day"
+          - name: high
+            description: "Highest price during the day"
+          - name: low
+            description: "Lowest price during the day"
+          - name: close
+            description: "Closing price for the day"
+          - name: volume
+            description: "Trading volume (number of shares traded)"

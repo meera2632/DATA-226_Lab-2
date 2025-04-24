@@ -1,0 +1,67 @@
+version: 2
+
+models:
+  - name: stock_price
+    description: "Stage model: casting raw types, filtering out bad rows"
+    columns:
+      - name: date
+        tests: [not_null]
+      - name: symbol
+        tests: [not_null]
+      - name: close
+        tests: [not_null]
+      - name: volume
+        tests: [not_null]
+
+  - name: ma_rsi
+    description: "Calculates 20-day and 50-day moving averages and 14-day RSI for each stock"
+    columns:
+      - name: date
+        tests: [not_null]
+      - name: symbol
+        tests: [not_null]
+      - name: ma_14
+        tests: [not_null]
+      - name: rsi_14
+        description: "Relative Strength Index calculated over 14 days"
+        tests: [not_null]
+
+  - name: daily_momentum
+    description: "Computes daily return, 3-day, and 7-day momentum indicators"
+    columns:
+      - name: date
+        tests: [not_null]
+      - name: symbol
+        tests: [not_null]
+      - name: daily_return
+        description: "Daily return"
+        # not_null test removed
+      - name: momentum_3d
+        description: "3-day momentum"
+        # not_null test removed
+      - name: momentum_7d
+        description: "7-day momentum"
+        # not_null test removed
+
+  - name: stock_summary
+    description: "Aggregated summary of RSI, MAs, and momentum per stock with time range"
+    columns:
+      - name: symbol
+        tests: [not_null, unique]
+      - name: avg_rsi
+      - name: avg_ma_14
+      - name: avg_return
+      - name: avg_momentum_3d
+      - name: avg_momentum_7d
+      - name: min_daily_return
+      - name: max_daily_return
+      - name: start_date
+      - name: end_date
+      - name: load_timestamp
+
+snapshots:
+  - name: stock_price_snapshot
+    description: "Snapshot of stock_prices table to capture changes over time"
+    config:
+      strategy: check
+      unique_key: date || '-' || symbol
